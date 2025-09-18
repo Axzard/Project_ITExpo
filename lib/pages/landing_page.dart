@@ -71,12 +71,12 @@ class LandingPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                    );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AdminLoginPage(),
+                    ),
+                  );
                   },
                   child: const Text(
                     "Masuk sebagai Admin",

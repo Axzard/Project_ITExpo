@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jendela_informatika/pages/landing_page.dart';
 
 class HomeClientPage extends StatelessWidget {
   final String nama;
@@ -54,7 +55,7 @@ class HomeClientPage extends StatelessWidget {
         'iconSize': 40.0,
         'bgColor': Colors.red.withOpacity(0.05),
         'onTap': () {
-          
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LandingPage()));
         },
       },
     ];

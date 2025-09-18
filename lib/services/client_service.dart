@@ -1,32 +1,36 @@
+// lib/services/client_service.dart
 import 'dart:convert';
-import 'package:jendela_informatika/models/client_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:jendela_informatika/models/client_model.dart';
 
 class ClientService {
-  static const String _clientKey = 'client_data';
+  static const String _clientsKey = 'clients';
 
-  // Simpan data client
+  /// Simpan satu client baru
   static Future<void> saveClient(ClientModel client) async {
     final prefs = await SharedPreferences.getInstance();
-    String jsonClient = jsonEncode(client.toMap());
-    await prefs.setString(_clientKey, jsonClient);
+    List<String> clientList = prefs.getStringList(_clientsKey) ?? [];
+
+    String clientJson = jsonEncode(client.toMap());
+    clientList.add(clientJson);
+
+    await prefs.setStringList(_clientsKey, clientList);
   }
 
-  // Ambil data client
-  static Future<ClientModel?> getClient() async {
+  /// Ambil semua client
+  static Future<List<ClientModel>> getClients() async {
     final prefs = await SharedPreferences.getInstance();
-    String? jsonClient = prefs.getString(_clientKey);
-    if (jsonClient != null) {
-      Map<String, dynamic> map = jsonDecode(jsonClient);
+    List<String> clientList = prefs.getStringList(_clientsKey) ?? [];
+
+    return clientList.map((e) {
+      Map<String, dynamic> map = jsonDecode(e);
       return ClientModel.fromMap(map);
-    }
-    return null;
+    }).toList();
   }
 
-  // Hapus data client
-  static Future<void> clearClient() async {
+  /// Hapus semua client (opsional)
+  static Future<void> clearClients() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_clientKey);
+    await prefs.remove(_clientsKey);
   }
 }

@@ -38,7 +38,7 @@ class _FormRegistrasiPageState extends State<FormRegistrasiPage> {
           },
         ),
         title: const Text(
-          "Form Registrasi",
+          "Registrasi",
           style: TextStyle(
             color: Colors.white,
             fontFamily: 'Poppins',
