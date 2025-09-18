@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:jendela_informatika/pages/admin/login_page.dart';
-import 'package:jendela_informatika/pages/admin/profil_crud_page.dart';
+import 'package:jendela_informatika/pages/admin/daftar_dosen_crud.dart';
+import 'package:jendela_informatika/pages/admin/profil_informatika_crud_page.dart';
+import 'package:jendela_informatika/pages/admin/widgets/admin_drawer.dart';
+import 'package:jendela_informatika/pages/admin/widgets/dashboard_card.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// tambahkan import ini
+
 import 'package:jendela_informatika/models/client_model.dart';
 import 'package:jendela_informatika/services/client_service.dart';
 
@@ -17,9 +18,7 @@ class HomeAdminPage extends StatefulWidget {
 
 class _HomeAdminPageState extends State<HomeAdminPage> {
   int _selectedIndex = 0;
-
-  // nilai default
-  int jumlahBerita = 0; // diambil dari jumlah client
+  int jumlahBerita = 0; 
   int jumlahPortofolio = 12;
   int jumlahDosen = 8;
   int jumlahGaleri = 15;
@@ -29,9 +28,9 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
 
   List<Widget> get _pages => [
         _buildHomePage(),
-        const ProfilCrudPage(),
+        ProfilInformatikaCrudPage(),
         _buildGaleriPage(),
-        _buildDosenPage(),
+        const DaftarDosenCrudPage(),
         _buildPortofolioPage(),
       ];
 
@@ -41,7 +40,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   void initState() {
     super.initState();
     _loadAdminName();
-    _loadClients(); // tambahkan ini
+    _loadClients(); 
   }
 
   Future<void> _loadAdminName() async {
@@ -59,7 +58,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     if (mounted) {
       setState(() {
         _clients = loadedClients;
-        jumlahBerita = _clients.length; // update jumlah berita acara
+        jumlahBerita = _clients.length; 
       });
     }
   }
@@ -67,36 +66,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 10, 109, 189),
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-            ),
-            ListTile(
-              leading: const FaIcon(
-                FontAwesomeIcons.signOutAlt,
-                color: Colors.red,
-              ),
-              title: const Text('Logout'),
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AdminLoginPage()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: const AdminDrawer(),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: Builder(
@@ -164,35 +134,35 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildDashboardCard(
+                DashboardCard(
                   title: 'Berita Acara',
                   value: '$jumlahBerita',
                   icon: Icons.article,
                   color: Colors.blue,
                 ),
                 const SizedBox(width: 12),
-                _buildDashboardCard(
+                DashboardCard(
                   title: 'Portofolio',
                   value: '$jumlahPortofolio',
                   icon: Icons.work,
                   color: Colors.purple,
                 ),
                 const SizedBox(width: 12),
-                _buildDashboardCard(
+                DashboardCard(
                   title: 'Dosen',
                   value: '$jumlahDosen',
                   icon: Icons.people,
                   color: Colors.orange,
                 ),
                 const SizedBox(width: 12),
-                _buildDashboardCard(
+                DashboardCard(
                   title: 'Galeri',
                   value: '$jumlahGaleri',
                   icon: Icons.photo_library,
                   color: Colors.green,
                 ),
                 const SizedBox(width: 12),
-                _buildDashboardCard(
+                DashboardCard(
                   title: 'Rating',
                   value: '$ratingRata ⭐',
                   icon: Icons.star,
@@ -239,69 +209,8 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     return const Center(child: Text('Kelola Galeri'));
   }
 
-  Widget _buildDosenPage() {
-    return const Center(child: Text('Kelola Daftar Dosen'));
-  }
-
   Widget _buildPortofolioPage() {
     return const Center(child: Text('Kelola Portofolio Mahasiswa'));
   }
 
-  Widget _buildDashboardCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Container(
-      width: 160,
-      height: 90,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          children: [
-            Icon(icon, color: color, size: 30),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

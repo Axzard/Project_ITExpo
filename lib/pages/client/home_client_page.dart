@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jendela_informatika/pages/client/profil_informatika_page.dart';
 import 'package:jendela_informatika/pages/landing_page.dart';
 
 class HomeClientPage extends StatelessWidget {
@@ -14,7 +15,14 @@ class HomeClientPage extends StatelessWidget {
         'iconColor': Colors.blue,
         'iconSize': 40.0,
         'bgColor': Colors.blue.withOpacity(0.05),
-        'onTap': () {},
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfilInformatikaPage(),
+            ),
+          );
+        },
       },
       {
         'title': 'Galeri',
