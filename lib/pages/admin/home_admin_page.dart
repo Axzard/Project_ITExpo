@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:jendela_informatika/models/galeri_model.dart';
 import 'package:jendela_informatika/pages/admin/daftar_dosen_crud.dart';
+import 'package:jendela_informatika/pages/admin/galeri_crud.dart';
 import 'package:jendela_informatika/pages/admin/profil_informatika_crud_page.dart';
 import 'package:jendela_informatika/pages/admin/widgets/admin_drawer.dart';
 import 'package:jendela_informatika/pages/admin/widgets/dashboard_card.dart';
+import 'package:jendela_informatika/services/galeri_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 import 'package:jendela_informatika/models/client_model.dart';
 import 'package:jendela_informatika/services/client_service.dart';
@@ -18,21 +22,22 @@ class HomeAdminPage extends StatefulWidget {
 
 class _HomeAdminPageState extends State<HomeAdminPage> {
   int _selectedIndex = 0;
-  int jumlahBerita = 0; 
+  int jumlahBerita = 0;
   int jumlahPortofolio = 12;
   int jumlahDosen = 8;
   int jumlahGaleri = 15;
   double ratingRata = 4.5;
 
   List<ClientModel> _clients = [];
+  List<GaleriModel> _galeriList = [];
 
   List<Widget> get _pages => [
-        _buildHomePage(),
-        ProfilInformatikaCrudPage(),
-        _buildGaleriPage(),
-        const DaftarDosenCrudPage(),
-        _buildPortofolioPage(),
-      ];
+    _buildHomePage(),
+    ProfilInformatikaCrudPage(),
+    GaleriCrudPage(),
+    const DaftarDosenCrudPage(),
+    _buildPortofolioPage(),
+  ];
 
   String _adminName = '';
 
@@ -40,7 +45,18 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   void initState() {
     super.initState();
     _loadAdminName();
-    _loadClients(); 
+    _loadClients();
+    _loadGaleriList();
+  }
+
+  Future<void> _loadGaleriList() async {
+    final list = await GaleriService.loadGaleri();
+    if (mounted) {
+      setState(() {
+        _galeriList = list;
+        jumlahGaleri = list.length; // supaya dashboard card juga update
+      });
+    }
   }
 
   Future<void> _loadAdminName() async {
@@ -58,7 +74,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     if (mounted) {
       setState(() {
         _clients = loadedClients;
-        jumlahBerita = _clients.length; 
+        jumlahBerita = _clients.length;
       });
     }
   }
@@ -95,11 +111,15 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: const Color.fromARGB(255, 10, 109, 189),
         unselectedItemColor: Colors.grey,
-        onTap: (index) {
+        onTap: (index) async {
           setState(() {
             _selectedIndex = index;
           });
+          if (index == 2) {
+            await _loadGaleriList();
+          }
         },
+
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -184,19 +204,50 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: 6,
+            itemCount: _galeriList.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
             ),
             itemBuilder: (context, index) {
+              final item = _galeriList[index];
               return Container(
                 decoration: BoxDecoration(
                   color: Colors.blueGrey.shade100,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Center(child: Text('Galeri $index')),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(8),
+                        ),
+                        child: Image.file(
+                          File(item.imagePath),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        item.title,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Text(
+                        item.date,
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ),
@@ -205,12 +256,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     );
   }
 
-  Widget _buildGaleriPage() {
-    return const Center(child: Text('Kelola Galeri'));
-  }
-
   Widget _buildPortofolioPage() {
     return const Center(child: Text('Kelola Portofolio Mahasiswa'));
   }
-
 }

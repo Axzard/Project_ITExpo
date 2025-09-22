@@ -11,8 +11,7 @@ class DosenCard extends StatelessWidget {
     Key? key,
     required this.profil,
     required this.onEdit,
-    required this.onDelete, 
-    required DosenModel DosenModel,
+    required this.onDelete,
   }) : super(key: key);
 
   @override
@@ -28,8 +27,8 @@ class DosenCard extends StatelessWidget {
             aspectRatio: 50 / 40,
             child: profil.fotoProfil.isNotEmpty
                 ? (profil.fotoProfil.startsWith('http')
-                      ? Image.network(profil.fotoProfil, fit: BoxFit.cover)
-                      : Image.file(File(profil.fotoProfil), fit: BoxFit.cover))
+                    ? Image.network(profil.fotoProfil, fit: BoxFit.cover)
+                    : Image.file(File(profil.fotoProfil), fit: BoxFit.cover))
                 : Container(
                     color: Colors.grey.shade200,
                     child: const Center(
@@ -52,7 +51,6 @@ class DosenCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-
                 Text(
                   '${profil.gelar} • ${profil.status}',
                   style: const TextStyle(
@@ -64,7 +62,6 @@ class DosenCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
-
                 Text(
                   profil.deskripsi,
                   maxLines: 3,
@@ -72,7 +69,6 @@ class DosenCard extends StatelessWidget {
                   style: const TextStyle(fontSize: 12),
                 ),
                 const SizedBox(height: 8),
-
                 Row(
                   children: [
                     IconButton(

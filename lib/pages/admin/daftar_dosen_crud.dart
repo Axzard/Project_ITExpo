@@ -120,7 +120,7 @@ class _DaftarDosenCrudPageState extends State<DaftarDosenCrudPage> {
                     if (profil == null) {
                       await _service.tambahProfil(newProfil);
                     } else {
-                      await _service.editProfil(profil.id, newProfil );
+                      await _service.editProfil(profil.id, newProfil);
                     }
                     Navigator.pop(context);
                     _loadData();
@@ -143,22 +143,20 @@ class _DaftarDosenCrudPageState extends State<DaftarDosenCrudPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-        child: Column(
-          children: List.generate(_profilList.length, (index) {
-            final profil = _profilList[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12.0),
-              child: DosenCard(
-                profil: profil,
-                onEdit: () => _showForm(profil: profil),
-                onDelete: () => _hapusProfil(profil.id),
-                DosenModel: profil,
-              ),
-            );
-          }),
-        ),
+        itemCount: _profilList.length,
+        itemBuilder: (context, index) {
+          final profil = _profilList[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: DosenCard(
+              profil: profil,
+              onEdit: () => _showForm(profil: profil),
+              onDelete: () => _hapusProfil(profil.id),
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showForm(),

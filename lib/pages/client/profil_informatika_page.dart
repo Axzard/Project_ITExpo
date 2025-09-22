@@ -48,7 +48,6 @@ class _ProfilInformatikaPageState extends State<ProfilInformatikaPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Foto Profil
                   _profil!.imagePath.isNotEmpty
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(12),
@@ -70,34 +69,28 @@ class _ProfilInformatikaPageState extends State<ProfilInformatikaPage> {
                         ),
                   const SizedBox(height: 16),
 
-                  // Visi
                   const Text(
                     'Visi:',
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
-                        fontSize: 16),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    _profil!.visi,
-                    style: const TextStyle(fontSize: 14),
-                  ),
+                  Text(_profil!.visi, style: const TextStyle(fontSize: 14)),
                   const SizedBox(height: 16),
 
-                  // Misi
                   const Text(
                     'Misi:',
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
-                        fontSize: 16),
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    _profil!.misi,
-                    style: const TextStyle(fontSize: 14),
-                  ),
+                  Text(_profil!.misi, style: const TextStyle(fontSize: 14)),
                   const SizedBox(height: 20),
                 ],
               ),

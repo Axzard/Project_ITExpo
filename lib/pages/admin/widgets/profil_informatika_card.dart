@@ -78,13 +78,6 @@ class ProfilInformatikaCard extends StatelessWidget {
                 Row(
                   children: [
                     TextButton(
-                      onPressed: onEdit,
-                      child: const Text(
-                        'Edit',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ),
-                    TextButton(
                       onPressed: onDelete,
                       child: const Text(
                         'Hapus',
