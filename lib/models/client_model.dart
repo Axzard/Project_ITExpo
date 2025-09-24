@@ -30,4 +30,5 @@ class ClientModel {
       alamat: map['alamat'],
     );
   }
+
 }

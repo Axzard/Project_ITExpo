@@ -29,13 +29,6 @@ class _ProfilInformatikaPageState extends State<ProfilInformatikaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Profil Informatika',
-          style: TextStyle(fontFamily: 'Poppins'),
-        ),
-        centerTitle: true,
-      ),
       body: _profil == null
           ? const Center(
               child: Text(

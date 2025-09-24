@@ -94,8 +94,9 @@ class _GaleriCrudPageState extends State<GaleriCrudPage> {
               },
             ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue,
         onPressed: _addGaleri,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add,color: Colors.white),
       ),
     );
   }

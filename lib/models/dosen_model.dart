@@ -36,4 +36,8 @@ class DosenModel {
       status: map['status'],
     );
   }
+
+  String? get keahlian => null;
+
+  get fotoPath => null;
 }

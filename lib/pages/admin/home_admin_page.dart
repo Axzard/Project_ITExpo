@@ -1,15 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:jendela_informatika/models/galeri_model.dart';
 import 'package:jendela_informatika/pages/admin/daftar_dosen_crud.dart';
 import 'package:jendela_informatika/pages/admin/galeri_crud.dart';
 import 'package:jendela_informatika/pages/admin/profil_informatika_crud_page.dart';
 import 'package:jendela_informatika/pages/admin/widgets/admin_drawer.dart';
-import 'package:jendela_informatika/pages/admin/widgets/dashboard_card.dart';
 import 'package:jendela_informatika/services/galeri_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:jendela_informatika/models/client_model.dart';
 import 'package:jendela_informatika/services/client_service.dart';
 
@@ -32,12 +29,12 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   List<GaleriModel> _galeriList = [];
 
   List<Widget> get _pages => [
-    _buildHomePage(),
-    ProfilInformatikaCrudPage(),
-    GaleriCrudPage(),
-    const DaftarDosenCrudPage(),
-    _buildPortofolioPage(),
-  ];
+        _buildHomePage(),
+        const ProfilInformatikaCrudPage(),
+        const GaleriCrudPage(),
+        const DaftarDosenCrudPage(),
+        _buildPortofolioPage(),
+      ];
 
   String _adminName = '';
 
@@ -54,7 +51,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     if (mounted) {
       setState(() {
         _galeriList = list;
-        jumlahGaleri = list.length; // supaya dashboard card juga update
+        jumlahGaleri = list.length;
       });
     }
   }
@@ -103,31 +100,36 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 10, 109, 189),
+        backgroundColor: const Color(0xFF0A6DBD),
         centerTitle: true,
+        elevation: 0,
       ),
-      body: _pages[_selectedIndex],
+      body: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade50, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: _pages[_selectedIndex],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        selectedItemColor: const Color.fromARGB(255, 10, 109, 189),
+        selectedItemColor: const Color(0xFF0A6DBD),
         unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
         onTap: (index) async {
           setState(() {
             _selectedIndex = index;
           });
-          if (index == 2) {
-            await _loadGaleriList();
-          }
+          if (index == 2) await _loadGaleriList();
         },
-
-        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Profil'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.photo_library),
-            label: 'Galeri',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.photo_library), label: 'Galeri'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Dosen'),
           BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Portofolio'),
         ],
@@ -136,127 +138,111 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
   }
 
   Widget _buildHomePage() {
-    return SingleChildScrollView(
+  return RefreshIndicator(
+    onRefresh: () async {
+      await _loadGaleriList();
+    },
+    child: ListView.builder(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Overview",
-            style: TextStyle(
-              fontSize: 18,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.bold,
-            ),
+      itemCount: _galeriList.length,
+      itemBuilder: (context, index) {
+        final item = _galeriList[index];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 6,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                DashboardCard(
-                  title: 'Berita Acara',
-                  value: '$jumlahBerita',
-                  icon: Icons.article,
-                  color: Colors.blue,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Gambar
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                child: Image.file(
+                  File(item.imagePath),
+                  width: double.infinity,
+                  height: 300,
+                  fit: BoxFit.cover,
                 ),
-                const SizedBox(width: 12),
-                DashboardCard(
-                  title: 'Portofolio',
-                  value: '$jumlahPortofolio',
-                  icon: Icons.work,
-                  color: Colors.purple,
-                ),
-                const SizedBox(width: 12),
-                DashboardCard(
-                  title: 'Dosen',
-                  value: '$jumlahDosen',
-                  icon: Icons.people,
-                  color: Colors.orange,
-                ),
-                const SizedBox(width: 12),
-                DashboardCard(
-                  title: 'Galeri',
-                  value: '$jumlahGaleri',
-                  icon: Icons.photo_library,
-                  color: Colors.green,
-                ),
-                const SizedBox(width: 12),
-                DashboardCard(
-                  title: 'Rating',
-                  value: '$ratingRata ⭐',
-                  icon: Icons.star,
-                  color: Colors.amber,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            "Galeri Informatika",
-            style: TextStyle(
-              fontSize: 18,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _galeriList.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-            ),
-            itemBuilder: (context, index) {
-              final item = _galeriList[index];
-              return Container(
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey.shade100,
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(8),
-                        ),
-                        child: Image.file(
-                          File(item.imagePath),
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
+                    Text(
+                      item.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.date,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                        item.title,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                    const SizedBox(height: 8),
+                    Text(
+                      item.description,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
                       ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Text(
-                        item.date,
-                        style: const TextStyle(fontSize: 10),
-                      ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.favorite,
+                            color: Colors.red.shade300, size: 18),
+                        const SizedBox(width: 4),
+                        Text('${item.likes}'),
+                        const SizedBox(width: 16),
+                        Icon(Icons.comment, color: Colors.grey.shade600, size: 18),
+                        const SizedBox(width: 4),
+                        Text('${item.comments}'),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.share, size: 20),
+                          onPressed: () {
+                            // aksi share
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              );
-            },
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
+        );
+      },
+    ),
+  );
+}
 
   Widget _buildPortofolioPage() {
-    return const Center(child: Text('Kelola Portofolio Mahasiswa'));
+    return const Center(
+      child: Text(
+        'Kelola Portofolio Mahasiswa',
+        style: TextStyle(fontFamily: 'Poppins', fontSize: 16),
+      ),
+    );
   }
 }

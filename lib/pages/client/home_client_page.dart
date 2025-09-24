@@ -1,152 +1,133 @@
 import 'package:flutter/material.dart';
+import 'package:jendela_informatika/models/galeri_model.dart';
+import 'package:jendela_informatika/pages/client/dosen_page_client.dart';
+import 'package:jendela_informatika/pages/client/rating_page.dart';
+import 'package:jendela_informatika/pages/client/widgets/client_drawer.dart';
+import 'package:jendela_informatika/pages/client/widgets/galeri_card.dart';
+import 'package:jendela_informatika/services/galeri_service.dart';
 import 'package:jendela_informatika/pages/client/profil_informatika_page.dart';
-import 'package:jendela_informatika/pages/landing_page.dart';
 
-class HomeClientPage extends StatelessWidget {
+class HomeClientPage extends StatefulWidget {
   final String nama;
   const HomeClientPage({super.key, required this.nama});
 
   @override
+  State<HomeClientPage> createState() => _HomeClientPageState();
+}
+
+class _HomeClientPageState extends State<HomeClientPage> {
+  int _selectedIndex = 0;
+  List<GaleriModel> _galeriList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final galeri = await GaleriService.loadGaleri();
+    setState(() {
+      _galeriList = galeri;
+    });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Widget _buildHomePage() {
+  return RefreshIndicator(
+    onRefresh: _loadData,
+    child: ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        const Text("Galeri Informatika",
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins')),
+        const SizedBox(height: 8),
+        if (_galeriList.isEmpty)
+          const Text("Belum ada galeri")
+        else
+          ..._galeriList.map((item) {
+            return GaleriCard(
+              item: item,
+              onLike: () {
+                // Simpan like ke backend atau SharedPreferences jika perlu
+              },
+              onComment: () {
+                // Aksi buka komentar
+              },
+            );
+          }).toList(),
+      ],
+    ),
+  );
+}
+
+  Widget _buildProfilPage() {
+    return const ProfilInformatikaPage();
+  }
+
+
+
+
+
+
+  @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> menuItems = [
-      {
-        'title': 'Profil Informatika',
-        'icon': Icons.school,
-        'iconColor': Colors.blue,
-        'iconSize': 40.0,
-        'bgColor': Colors.blue.withOpacity(0.05),
-        'onTap': () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfilInformatikaPage(),
-            ),
-          );
-        },
-      },
-      {
-        'title': 'Galeri',
-        'icon': Icons.photo_library,
-        'iconColor': Colors.green,
-        'iconSize': 45.0,
-        'bgColor': Colors.green.withOpacity(0.05),
-        'onTap': () {},
-      },
-      {
-        'title': 'Daftar Dosen & Keahlian',
-        'icon': Icons.people,
-        'iconColor': Colors.orange,
-        'iconSize': 42.0,
-        'bgColor': Colors.orange.withOpacity(0.05),
-        'onTap': () {},
-      },
-      {
-        'title': 'Portofolio Mahasiswa',
-        'icon': Icons.work,
-        'iconColor': Colors.purple,
-        'iconSize': 40.0,
-        'bgColor': Colors.purple.withOpacity(0.05),
-        'onTap': () {},
-      },
-      {
-        'title': 'Beri Rating Aplikasi',
-        'icon': Icons.star_rate,
-        'iconColor': Colors.amber,
-        'iconSize': 48.0,
-        'bgColor': Colors.amber.withOpacity(0.05),
-        'onTap': () {},
-      },
-      {
-        'title': 'Logout',
-        'icon': Icons.logout,
-        'iconColor': Colors.red,
-        'iconSize': 40.0,
-        'bgColor': Colors.red.withOpacity(0.05),
-        'onTap': () {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LandingPage()));
-        },
-      },
+    final pages = [
+      _buildHomePage(),
+      _buildProfilPage(),
+      DosenClientPage(),
+      RatingPage()
     ];
 
     return Scaffold(
-      appBar: AppBar(
+      drawer: const ClientDrawer(),
+     appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color.fromARGB(255, 10, 109, 189),
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu, color: Colors.white),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
         title: Text(
-          "Halo, $nama 👋",
+          'Halo ${widget.nama}',
           style: const TextStyle(
             color: Colors.white,
             fontFamily: 'Poppins',
             fontWeight: FontWeight.bold,
           ),
         ),
+        backgroundColor: const Color(0xFF0A6DBD),
         centerTitle: true,
+        elevation: 0,
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            color: Colors.blue.withOpacity(0.1),
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Selamat datang di Pameran Informatika.",
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
+      // Drawer tetap sama
+      
+      body: pages[_selectedIndex],
 
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 1,
-              ),
-              itemCount: menuItems.length,
-              itemBuilder: (context, index) {
-                final item = menuItems[index];
-                return InkWell(
-                  onTap: item['onTap'],
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: item['bgColor'] ?? Colors.blue.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: (item['iconColor'] as Color).withOpacity(0.3),
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          item['icon'],
-                          size: item['iconSize'] ?? 40.0,
-                          color: item['iconColor'] ?? Colors.blue,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          item['title'],
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        selectedItemColor: const Color.fromARGB(255, 10, 109, 189),
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.school), label: "Profil"),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Dosen"),
+          BottomNavigationBarItem(icon: Icon(Icons.star), label: "Rating"),
         ],
       ),
     );

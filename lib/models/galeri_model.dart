@@ -28,12 +28,12 @@ class GaleriModel {
 
   factory GaleriModel.fromMap(Map<String, dynamic> map) {
     return GaleriModel(
-      imagePath: map['imagePath'],
-      title: map['title'],
-      description: map['description'],
-      date: map['date'],
-      likes: map['likes'],
-      comments: map['comments'],
+      imagePath: map['imagePath'] ?? '',
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
+      date: map['date'] ?? '',
+      likes: map['likes'] ?? 0,
+      comments: map['comments'] ?? 0,
     );
   }
 }

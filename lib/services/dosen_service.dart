@@ -9,9 +9,8 @@ class DosenService {
   Future<void> simpanSemua(List<DosenModel> profilList) async {
     final prefs = await SharedPreferences.getInstance();
     // ubah semua ke List<String>
-    final List<String> encodedList = profilList
-        .map((e) => jsonEncode(e.toMap()))
-        .toList();
+    final List<String> encodedList =
+        profilList.map((e) => jsonEncode(e.toMap())).toList();
     await prefs.setStringList(_key, encodedList);
   }
 
@@ -46,5 +45,14 @@ class DosenService {
     final list = await ambilSemua();
     list.removeWhere((p) => p.id == id);
     await simpanSemua(list);
+  }
+
+  /// Fungsi loadDosen untuk Client Page
+  static Future<List<DosenModel>> loadDosen() async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> dataList = prefs.getStringList(_key) ?? [];
+    return dataList
+        .map((item) => DosenModel.fromMap(jsonDecode(item)))
+        .toList();
   }
 }

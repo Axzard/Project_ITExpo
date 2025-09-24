@@ -161,7 +161,7 @@ class _DaftarDosenCrudPageState extends State<DaftarDosenCrudPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showForm(),
         backgroundColor: Colors.blue,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
