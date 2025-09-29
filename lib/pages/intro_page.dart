@@ -24,7 +24,7 @@ class _IntroPageState extends State<IntroPage> {
             Image.asset('assets/images/logohmti.png', width: 40, height: 40),
             SizedBox(width: 10),
             Text(
-              "Jenfo",
+              "Jendela HMTI",
               style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Poppins',
