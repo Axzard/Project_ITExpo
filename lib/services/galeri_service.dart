@@ -17,8 +17,7 @@ class GaleriService {
 
   static Future<void> saveGaleri(List<GaleriModel> galeriList) async {
     final prefs = await SharedPreferences.getInstance();
-    final encoded =
-        json.encode(galeriList.map((e) => e.toMap()).toList());
+    final encoded = json.encode(galeriList.map((e) => e.toMap()).toList());
     await prefs.setString(key, encoded);
   }
 }

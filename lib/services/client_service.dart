@@ -33,4 +33,13 @@ class ClientService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_clientsKey);
   }
+
+  static Future<void> deleteClientAt(int index) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> clientList = prefs.getStringList(_clientsKey) ?? [];
+    if (index >= 0 && index < clientList.length) {
+      clientList.removeAt(index);
+      await prefs.setStringList(_clientsKey, clientList);
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jendela_informatika/services/admin_service.dart';
 
 class RatingPage extends StatefulWidget {
   const RatingPage({super.key});
@@ -11,30 +12,7 @@ class RatingPage extends StatefulWidget {
 class _RatingPageState extends State<RatingPage> {
   double _rating = 0; // rating bintang
   final TextEditingController _commentController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadRating();
-  }
-
-  Future<void> _loadRating() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _rating = prefs.getDouble('app_rating') ?? 0;
-      _commentController.text = prefs.getString('app_comment') ?? '';
-    });
-  }
-
-  Future<void> _saveRating() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('app_rating', _rating);
-    await prefs.setString('app_comment', _commentController.text);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Rating berhasil disimpan')),
-    );
-  }
+  final TextEditingController _namaController = TextEditingController();
 
   Widget _buildStar(int index) {
     if (index < _rating) {
@@ -58,6 +36,33 @@ class _RatingPageState extends State<RatingPage> {
     }
   }
 
+  Future<void> _saveRating() async {
+    if (_namaController.text.isEmpty || _rating == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Isi nama dan pilih rating')),
+      );
+      return;
+    }
+
+    await AdminService.addRating({
+      'nama': _namaController.text,
+      'nilai': _rating,
+      'komentar': _commentController.text,
+      'tanggal': DateTime.now().toIso8601String(),
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Rating berhasil disimpan')),
+    );
+
+    // reset
+    setState(() {
+      _rating = 0;
+      _namaController.clear();
+      _commentController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,24 +71,21 @@ class _RatingPageState extends State<RatingPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 20),
-            const Text(
-              'Berikan Rating Aplikasi',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins'),
+            TextField(
+              controller: _namaController,
+              decoration: InputDecoration(
+                labelText: 'Nama Anda',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
             const SizedBox(height: 20),
-
-            // BINTANG
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(5, (index) => _buildStar(index)),
             ),
             const SizedBox(height: 20),
-
-            // KOMENTAR
             TextField(
               controller: _commentController,
               decoration: InputDecoration(
@@ -95,13 +97,11 @@ class _RatingPageState extends State<RatingPage> {
               maxLines: 3,
             ),
             const SizedBox(height: 30),
-
-            // SIMPAN BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _saveRating,
-                icon: const Icon(Icons.save, color: Colors.white),
+                icon: const FaIcon(FontAwesomeIcons.save, color: Colors.white),
                 label: const Text('Simpan Rating',
                     style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(

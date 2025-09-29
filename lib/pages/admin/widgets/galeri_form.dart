@@ -66,6 +66,7 @@ Future<GaleriModel?> showGaleriForm(BuildContext context,
                         descController.text.isEmpty) return;
 
                     final newItem = GaleriModel(
+                      id: existing?.id ?? DateTime.now().toString(),
                       imagePath: imageFile!.path,
                       title: titleController.text,
                       description: descController.text,

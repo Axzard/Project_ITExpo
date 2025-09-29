@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jendela_informatika/models/galeri_model.dart';
 import 'package:jendela_informatika/pages/client/dosen_page_client.dart';
 import 'package:jendela_informatika/pages/client/rating_page.dart';
@@ -124,10 +125,10 @@ class _HomeClientPageState extends State<HomeClientPage> {
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: "Profil"),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: "Dosen"),
-          BottomNavigationBarItem(icon: Icon(Icons.star), label: "Rating"),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.home), label: "Home"),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.user), label: "Profil"),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.chalkboardTeacher), label: "Dosen"),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.star), label: "Rating"),
         ],
       ),
     );

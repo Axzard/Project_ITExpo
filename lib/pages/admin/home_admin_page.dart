@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jendela_informatika/models/galeri_model.dart';
 import 'package:jendela_informatika/pages/admin/daftar_dosen_crud.dart';
 import 'package:jendela_informatika/pages/admin/galeri_crud.dart';
@@ -33,7 +34,6 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         const ProfilInformatikaCrudPage(),
         const GaleriCrudPage(),
         const DaftarDosenCrudPage(),
-        _buildPortofolioPage(),
       ];
 
   String _adminName = '';
@@ -85,7 +85,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
         leading: Builder(
           builder: (context) {
             return IconButton(
-              icon: const Icon(Icons.menu, color: Colors.white),
+              icon: const FaIcon(FontAwesomeIcons.bars, color: Colors.white),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
@@ -127,11 +127,10 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
           if (index == 2) await _loadGaleriList();
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Profil'),
-          BottomNavigationBarItem(icon: Icon(Icons.photo_library), label: 'Galeri'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Dosen'),
-          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Portofolio'),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.user), label: 'Profil'),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.images), label: 'Galeri'),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.graduationCap), label: 'Dosen')
         ],
       ),
     );
@@ -214,7 +213,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                         const SizedBox(width: 4),
                         Text('${item.likes}'),
                         const SizedBox(width: 16),
-                        Icon(Icons.comment, color: Colors.grey.shade600, size: 18),
+                        FaIcon(FontAwesomeIcons.comment, color: Colors.grey.shade600, size: 18),
                         const SizedBox(width: 4),
                         Text('${item.comments}'),
                         const Spacer(),
@@ -236,13 +235,4 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     ),
   );
 }
-
-  Widget _buildPortofolioPage() {
-    return const Center(
-      child: Text(
-        'Kelola Portofolio Mahasiswa',
-        style: TextStyle(fontFamily: 'Poppins', fontSize: 16),
-      ),
-    );
-  }
 }

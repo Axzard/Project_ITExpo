@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jendela_informatika/pages/client/form_registrasi_page.dart';
+import 'package:jendela_informatika/pages/intro_page.dart';
 import 'admin/login_page.dart';
 
 class LandingPage extends StatelessWidget {
@@ -8,6 +9,15 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(onPressed: (){
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const IntroPage()));
+          }, icon: Icon(Icons.arrow_back, color: Colors.blue,size: 26)),
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
